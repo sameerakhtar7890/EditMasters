@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
@@ -14,9 +15,8 @@ app.use(cors());
 app.use("/api/users", userRoute);
 const uploadDrive = multer({ dest: "uploads/" });
 
-// Connect to MongoDB
-mongoose.connect(
-  "mongodb://localhost:27017/test");
+// Connect to MongoDB Atlas (Cloud)
+mongoose.connect(process.env.MONGO_URI);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
