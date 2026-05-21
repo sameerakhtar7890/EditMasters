@@ -1,0 +1,21 @@
+.drive {
+    position: relative; /* Ensure .drive is relative for the ::before to position correctly */
+    background-image: url('../assets/drivee.avif');
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding-top: 80px;
+    padding-bottom: 10%;
+  }
+  
+  .drive::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit; /* Use the same background as the parent */
+    opacity: 0.4; /* Adjust the opacity value as needed */
+    z-index: -1; /* Ensure it is behind the content */
+  }
+  
