@@ -4,7 +4,14 @@ const multer = require("multer");
 const mongoose = require("mongoose");
 const path = require("path");
 const cors = require("cors");
-const userRoute = require("./Routes/userRoutes");
+const fs = require("fs");
+
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+const userRoute = require("./routes/userRoutes");
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -125,6 +132,8 @@ app.get("/files", async (req, res) => {
 // Serve uploaded files statically
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
+const PORT = process.env.PORT || 7860;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
+
