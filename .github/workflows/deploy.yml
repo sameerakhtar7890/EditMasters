@@ -1,0 +1,36 @@
+name: Sync Backend to Hugging Face Spaces
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**' # Sirf tab run hoga jab backend folder ke andar changes hongi
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "actions@github.com"
+          
+          # Hugging Face space repository ko clone karna
+          git clone https://sameerakhtar7890:$HF_TOKEN@huggingface.co/spaces/sameerakhtar7890/editmaster-backend hf_space
+          
+          # Backend directory ke contents ko temporary folder mein copy karna
+          cp -r backend/* hf_space/
+          
+          cd hf_space
+          git add .
+          
+          # Agar koi changes hain toh commit aur push karna
+          git diff-index --quiet HEAD || git commit -m "Sync from GitHub: ${{ github.event.head_commit.message }}"
+          git push origin main
