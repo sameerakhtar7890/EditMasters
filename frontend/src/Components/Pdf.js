@@ -3,7 +3,8 @@ import Footer from "./Footer";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "./Pdf.css"
+import "./Pdf.css";
+import API_URL from "../config";
 // import * as pdfjs from "pdfjs-dist/build/pdf";
 
 const Pdf = () => {
@@ -33,7 +34,7 @@ const Pdf = () => {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      await axios.post("http://localhost:5000/upload", formData);
+      await axios.post(`${API_URL}/upload`, formData);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -82,7 +83,7 @@ const Pdf = () => {
 
   const showFiles = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/files");
+      const response = await axios.get(`${API_URL}/files`);
       setFiles(response.data);
     } catch (error) {
       console.error("Error fetching files:", error);
@@ -134,7 +135,7 @@ const Pdf = () => {
             {files.map((file) => (
               <li key={file._id} className="me-3 mb-3">
                 <a
-                  href={`http://localhost:5000/${file.path}`}
+                  href={`${API_URL}/${file.path}`}
                   download
                   className="text-decoration-none"
                 >

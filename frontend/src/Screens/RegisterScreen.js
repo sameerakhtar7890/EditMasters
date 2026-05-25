@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import swal from "sweetalert2";
+import API_URL from "../config";
 
 const RegisterScreen = () => {
   const [name, setname] = useState("");
@@ -19,7 +20,7 @@ const RegisterScreen = () => {
       };
       try {
         const response = await fetch(
-          "http://localhost:5000/api/users/register",
+          `${API_URL}/api/users/register`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

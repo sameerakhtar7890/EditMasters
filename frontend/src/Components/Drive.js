@@ -3,7 +3,8 @@ import Footer from "./Footer";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "./Drive.css"
+import "./Drive.css";
+import API_URL from "../config";
 // import * as pdfjs from "pdfjs-dist/build/pdf";
 
 const Drive = () => {
@@ -33,7 +34,7 @@ const Drive = () => {
         const formData = new FormData();
         formData.append("file", file);
         try {
-            await axios.post("http://localhost:5000/drive", formData);
+            await axios.post(`${API_URL}/drive`, formData);
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -82,7 +83,7 @@ const Drive = () => {
 
     const showFiles = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/drives");
+            const response = await axios.get(`${API_URL}/drives`);
             setFiles(response.data);
         } catch (error) {
             console.error("Error fetching files:", error);
