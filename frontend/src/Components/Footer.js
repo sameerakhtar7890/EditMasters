@@ -1,80 +1,54 @@
 import React from "react";
-import "./Footer.css";
-import { useMediaQuery } from "react-responsive";
+import { Box, Typography, Container, Divider, Stack } from "@mui/material";
 
 const Footer = () => {
-  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   return (
-    <>
-      {isMobile ? (
-        <footer className="Footer container-fluid text-center text-lg-start text-light bg-dark">
-          <div>
-            <div className="m-3">
-              <hr />
-            </div>
-            <section className="pt-0">
-              <div className="container-fluid">
-                <div className="row align-items-center justify-content-between">
-                  <div className="col-md-7 col-lg-8 text-center text-md-start order-2 order-md-1">
-                    <div
-                      id="copy"
-                      className="CopyRight mx-1"
-                      style={{ fontSize: "0.9rem", color: "white" }}
-                    >
-                      &copy;2024 Edit Masters. All rights reserved
-                    </div>
-                  </div>
-                  <div className="col-md-12 col-lg-4 mt-3 mt-md-0">
-                    <div
-                      id="foot-end"
-                      className="Foot-end"
-                      style={{ fontSize: "0.9rem", color: "white" }}
-                    >
-                      <div className="mx-5">Privacy & Policy</div>
-                      <div>Terms & Conditions</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </footer>
-      ) : (
-        <footer className="Footer mt-5 container-fluid text-lg-start text-light bg-dark">
-          <div>
-            <div className="m-3">
-              <hr />
-            </div>
-
-            <section className="pt-0">
-              <div className="container-fluid">
-                <div className="row align-items-center justify-content-evenly">
-                  <div className="col-md-7 col-lg-8 order-2 order-md-1">
-                    <div
-                      id="copy"
-                      className="CopyRight"
-                      style={{ fontSize: "1rem", color: "white" }}
-                    >
-                      &copy;2024 Edit Masters. All rights reserved
-                    </div>
-                  </div>
-                  <div className="col-md-12 col-lg-4 mt-3 mt-md-0 order-1 order-md-2">
-                    <div
-                      id="foot-end"
-                      className="Foot-end d-flex justify-content-md-end"
-                      style={{ fontSize: "0.9rem", color: "white" }}
-                    >
-                      <div className="mx-5">Privacy & Policy</div>
-                      <div>Terms & Conditions</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </footer>
-      )}
-    </>
+    <Box
+      component="footer"
+      sx={{
+        mt: "auto",
+        py: 4,
+        background: "rgba(11, 15, 25, 0.5)",
+        borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+        backdropFilter: "blur(12px)",
+      }}
+    >
+      <Container maxWidth="lg">
+        <Divider sx={{ mb: 3, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={2}
+        >
+          <Typography variant="body2" color="text.secondary">
+            &copy; {new Date().getFullYear()} Edit Masters. All rights reserved.
+          </Typography>
+          <Stack direction="row" spacing={3}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                cursor: "pointer",
+                "&:hover": { color: "text.primary", transition: "color 0.2s ease" },
+              }}
+            >
+              Privacy Policy
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                cursor: "pointer",
+                "&:hover": { color: "text.primary", transition: "color 0.2s ease" },
+              }}
+            >
+              Terms & Conditions
+            </Typography>
+          </Stack>
+        </Stack>
+      </Container>
+    </Box>
   );
 };
 

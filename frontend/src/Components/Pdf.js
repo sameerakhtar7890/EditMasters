@@ -1,35 +1,39 @@
-import Nav from "./Nav";
-import Footer from "./Footer";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "./Pdf.css";
+import DashboardLayout from "./DashboardLayout";
+import DragDropUpload from "./DragDropUpload";
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  IconButton,
+  Tooltip,
+  Paper
+} from "@mui/material";
+import {
+  CloudUpload as UploadIcon,
+  Download as DownloadIcon,
+  PictureAsPdf as PdfIcon,
+  InsertDriveFile as FileIcon
+} from "@mui/icons-material";
 import API_URL from "../config";
-// import * as pdfjs from "pdfjs-dist/build/pdf";
 
 const Pdf = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [pdfData, setPdfData] = useState(null);
-  const [imageSrc, setImageSrc] = useState(null);
   const [files, setFiles] = useState([]);
 
-  var pdfjs = window["pdfjs-dist/build/pdf"];
-  pdfjs.GlobalWorkerOptions.workerSrc = "./assets/js/pdf.worker.js";
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+  const handleFileChange = (selectedFile) => {
     setFile(selectedFile);
-    setPdfData(null);
-    setImageSrc(null);
-    if (selectedFile.type === "application/pdf") {
-      renderPdf(selectedFile);
-    } else if (selectedFile.type.startsWith("image/")) {
-      renderImage(selectedFile);
-    }
   };
 
   const handleUpload = async () => {
+    if (!file) return;
     setLoading(true);
     const formData = new FormData();
     formData.append("file", file);
@@ -42,7 +46,7 @@ const Pdf = () => {
         showConfirmButton: false,
         timer: 1500
       });
-      setFile('')
+      setFile(null);
       showFiles();
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -53,32 +57,6 @@ const Pdf = () => {
       });
     }
     setLoading(false);
-  };
-
-
-  const renderPdf = async (file) => {
-    try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const data = new Uint8Array(reader.result);
-        const pdf = await pdfjs.getDocument({ data }).promise;
-        const page = await pdf.getPage(1);
-        const viewport = page.getViewport({ scale: 1.5 });
-        const canvas = document.getElementById("pdfCanvas");
-        const context = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        const renderContext = {
-          canvasContext: context,
-          viewport: viewport,
-        };
-        await page.render(renderContext);
-        setPdfData(canvas.toDataURL("image/jpeg"));
-      };
-      reader.readAsArrayBuffer(file);
-    } catch (error) {
-      console.error("Error rendering PDF:", error);
-    }
   };
 
   const showFiles = async () => {
@@ -94,68 +72,101 @@ const Pdf = () => {
     showFiles();
   }, []);
 
-  const renderImage = async (file) => {
-    try {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageSrc(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error("Error rendering image:", error);
-    }
-  };
-
   return (
-    <>
-      <Nav />
-      <div className="pdf">
-        <div className="container mt-5">
-          <h1 className="text-center mb-5">Online PDF Editor</h1>
-          <input type="file" onChange={handleFileChange} />
-          <button
-            className="btn btn-primary ms-3"
-            onClick={handleUpload}
-            disabled={!file || loading}
-          >
-            {loading ? "Uploading..." : "Upload"}
-          </button>
-          {/* {pdfData && file.type === "application/pdf" && (
-          // <img src={pdfData} alt="PDF Preview" className="img-fluid mt-3" />
-        )} */}
-          {imageSrc && file.type.startsWith("image/") && (
-            <img src={imageSrc} alt="Image Preview" className="img-fluid mt-3" />
-          )}
-          <canvas id="pdfCanvas" style={{ display: "none" }}></canvas>
-        </div>
-        <div className="container mt-5">
-          <h2>Files</h2>
-          <ul className="list-unstyled d-flex flex-wrap">
-            {console.log(files, "files")}
-            {files.map((file) => (
-              <li key={file._id} className="me-3 mb-3">
-                <a
-                  href={`${API_URL}/${file.path}`}
-                  download
-                  className="text-decoration-none"
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/1200px-PDF_file_icon.svg.png"
-                    alt="PDF Icon"
-                    width={80}
-                    height={80}
-                  />
-                  <br />
-                  {file.name}
-                </a>
-              </li>
-            ))}
+    <DashboardLayout>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, letterSpacing: "-0.5px" }}>
+          Online PDF Editor & Manager
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Upload and manage your PDF documents.
+        </Typography>
+      </Box>
 
-          </ul>
-        </div>
-      </div>
-      <Footer />
-    </>
+      <Grid container spacing={4}>
+        <Grid item xs={12} lg={4}>
+          <Paper className="glass-panel" sx={{ p: 3, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+              Upload New PDF
+            </Typography>
+            <DragDropUpload
+              onFileSelect={handleFileChange}
+              currentFile={file}
+              loading={loading}
+              accept="application/pdf"
+              label="Drag & drop PDF here or click to browse"
+              icon={PdfIcon}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              size="large"
+              onClick={handleUpload}
+              disabled={!file || loading}
+              startIcon={<UploadIcon />}
+              sx={{ mt: 1 }}
+            >
+              {loading ? "Uploading..." : "Upload PDF"}
+            </Button>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} lg={8}>
+          <Paper className="glass-panel" sx={{ p: 3, borderRadius: 3, minHeight: "400px" }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+              Uploaded PDF Documents ({files.length})
+            </Typography>
+
+            {files.length === 0 ? (
+              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", py: 8 }}>
+                <PdfIcon sx={{ fontSize: 64, color: "text.secondary", opacity: 0.3, mb: 2 }} />
+                <Typography variant="body1" color="text.secondary">
+                  No PDF files uploaded yet. Upload a PDF on the left panel.
+                </Typography>
+              </Box>
+            ) : (
+              <Grid container spacing={2}>
+                {files.map((f) => (
+                  <Grid item xs={12} sm={6} md={4} key={f._id}>
+                    <Card className="glass-panel glass-card-hover" sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                      <CardContent sx={{ flexGrow: 1, display: "flex", alignItems: "center", gap: 2, pt: 3, pb: 2 }}>
+                        <PdfIcon sx={{ fontSize: 40, color: "error.main" }} />
+                        <Box sx={{ overflow: "hidden" }}>
+                          <Typography variant="subtitle2" noWrap sx={{ fontWeight: 600, color: "text.primary" }}>
+                            {f.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" noWrap sx={{ display: "block" }}>
+                            PDF Document
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                      <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 2, pt: 0 }}>
+                        <Tooltip title="Download PDF">
+                          <IconButton
+                            href={`${API_URL}/${f.path}`}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{ 
+                              color: "primary.main", 
+                              backgroundColor: "rgba(23, 110, 222, 0.08)",
+                              "&:hover": { backgroundColor: "rgba(23, 110, 222, 0.15)" }
+                            }}
+                          >
+                            <DownloadIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          </Paper>
+        </Grid>
+      </Grid>
+    </DashboardLayout>
   );
 };
 

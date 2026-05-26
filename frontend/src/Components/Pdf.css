@@ -1,8 +1,1 @@
-.pdf {
-    background-image: url('../assets/pdffile.avif');
-    background-size: cover;
-    background-repeat: no-repeat;
-    padding-top: 50px;
-    padding-bottom: 10%;
-  }
-  
+/* PDF style overrides are now styled inside MUI container models */
